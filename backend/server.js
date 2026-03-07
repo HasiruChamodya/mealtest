@@ -11,6 +11,14 @@ const wardsRoutes = require("./routes/wardsRoutes");
 const { auditRequestMiddleware } = require("./middleware/auditRequestMiddleware");
 const dietPlansRoutes = require("./routes/dietPlansRoutes");
 const censusRoutes = require("./routes/censusRoutes");
+const calculationRoutes = require("./routes/calculationRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const priceRoutes = require("./routes/priceRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+const kitchenRoutes = require("./routes/kitchenRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const reportRoutes = require("./routes/reportRoutes");
 
 const app = express();
 
@@ -35,6 +43,14 @@ app.use("/api", hospitalAdminRoutes);
 app.use("/api/wards", wardsRoutes);
 app.use("/api/diet-plans", dietPlansRoutes);
 app.use("/api/census", censusRoutes);
+app.use("/api/calculations", calculationRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/prices", priceRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/kitchen", kitchenRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/reports", reportRoutes);
 
 // quick health check
 app.get("/health", (req, res) => res.json({ ok: true }));
