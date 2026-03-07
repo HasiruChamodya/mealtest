@@ -1,0 +1,49 @@
+CREATE TABLE wards (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    beds INTEGER DEFAULT 0,
+    cots INTEGER DEFAULT 0,
+    icu INTEGER DEFAULT 0,
+    incubators INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+-- Optional: Create an ENUM type for the census status to enforce valid values
+CREATE TYPE census_status AS ENUM ('not_started', 'draft', 'submitted', 'locked');
+
+CREATE TABLE ward_census (
+    -- Using UUID for the primary key is highly recommended for this type of system
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    
+    ward_id VARCHAR(50) NOT NULL,
+    date DATE NOT NULL,
+    
+    -- JSONB columns for flexible data structures
+    diets JSONB NOT NULL DEFAULT '{}'::jsonb,
+    staff JSONB NOT NULL DEFAULT '{}'::jsonb,
+    special JSONB NOT NULL DEFAULT '{}'::jsonb,
+    extras JSONB NOT NULL DEFAULT '{}'::jsonb,
+    custom_extras JSONB NOT NULL DEFAULT '[]'::jsonb,
+    
+    -- Status and calculations
+    status census_status NOT NULL DEFAULT 'draft',
+    total_patients INTEGER NOT NULL DEFAULT 0,
+    
+    -- Timestamps
+    submitted_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
+    -- CONSTRAINTS
+    -- This enforces the rule in your controller: A ward can only have one census per day
+    CONSTRAINT unique_ward_date UNIQUE (ward_id, date)
+);
+
+-- Indexes for faster querying, since you often filter by date or ward_id
+CREATE INDEX idx_ward_census_date ON ward_census(date);
+CREATE INDEX idx_ward_census_ward_id ON ward_census(ward_id);
